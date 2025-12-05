@@ -43,9 +43,9 @@ terraform apply tfplan
 Note the Public IPs outputted at the end of this step.
 ```
 
-Bash
+```Bash
 
-```cd ../ansible
+cd ../ansible
 ansible-playbook playbook.yml -i inventory
 ```
 
