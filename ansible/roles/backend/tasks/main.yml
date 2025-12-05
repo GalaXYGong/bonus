@@ -1,0 +1,45 @@
+#SPDX-License-Identifier: MIT-0
+---
+- name: Install nginx on rocky
+  ansible.builtin.dnf:
+    name: nginx
+    state: present
+  # when: "'server_role_frontend_server' in group_names and ansible_facts['distribution'] == 'Ubuntu'"
+- name : Start and enable nginx service
+  ansible.builtin.service:
+    name: nginx
+    state: started
+    enabled: true
+  # when: "'server_role_frontend_server' in group_names and ansible_facts['distribution'] == 'Ubuntu'"
+# # Create nginx configuration file
+# - name: create nginx configuration
+#   ansible.builtin.copy:
+#     src: default.conf # Ensure you have the file "default.conf" in your files directory
+#     dest: /etc/nginx/sites-available/default
+#   # when: "'server_role_frontend_server' in group_names and ansible_facts['distribution'] == 'Ubuntu'"
+#   notify: Reload nginx
+
+# - name: create index.html
+#   ansible.builtin.template:
+#     src: index.html.j2 # Ensure you have the file "index.html.j2" in your templates directory
+#     dest: /var/www/html/index.html
+#   # when: "'server_role_frontend_server' in group_names and ansible_facts['distribution'] == 'Ubuntu'"
+
+
+# # Enable nginx configuration by creating a symlink
+# - name: enable nginx configuration
+#   ansible.builtin.file:
+#     src: /etc/nginx/sites-available/default
+#     dest: /etc/nginx/sites-enabled/default
+#     state: link
+#   # when: "'server_role_frontend_server' in group_names and ansible_facts['distribution'] == 'Ubuntu'"
+#   notify: Reload nginx
+- name: Deploy Database Server HTML
+  copy:
+    # Rocky/RedHat sometimes uses /usr/share/nginx/html by default. 
+    # We force /usr/share/nginx/html for Rocky.
+    content: "<h1>Hello from database</h1>"
+    dest: /usr/share/nginx/html/index.html 
+  # when: "'Database' in group_names"
+  when: "'server_role_redis_server' in group_names and ansible_facts['distribution'] == 'Rocky'"
+  notify: Reload nginx
