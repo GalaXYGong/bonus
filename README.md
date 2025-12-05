@@ -29,22 +29,25 @@ terraform init
 
 Format and Plan:
 
-Bash
+```Bash
 
 terraform fmt
 terraform plan -out=tfplan
+```
 
 Apply Infrastructure:
 
-Bash
+```Bash
 
 terraform apply tfplan
 Note the Public IPs outputted at the end of this step.
+```
 
 Bash
 
-cd ../ansible
+```cd ../ansible
 ansible-playbook playbook.yml -i inventory
+```
 
 ## 4. Validation & Screenshots
 
