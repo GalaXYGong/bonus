@@ -1,43 +1,52 @@
-Role Name
-=========
+## Overview
+This repository contains the infrastructure and configuration code for the makeup lab. It uses Terraform to provision AWS resources and Ansible to configure Nginx web servers on Debian and Rocky Linux.
 
-A brief description of the role goes here.
+## 1. Generate SSH Keys
+Run the following command locally to generate the SSH key pair:
+```bash
+ssh-keygen -t rsa -b 2048 -f ~/.ssh/makeup-key -q -N ""
+```
 
-Requirements
-------------
+## 2. Upload Key to AWS
+The script in the scripts/ directory handles the upload of the public key to AWS.
 
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
+```Bash
 
-Role Variables
---------------
+chmod +x scripts/import_lab_key
+./scripts/import_lab_key keyname
+```
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+## 3. Terraform Execution
+Navigate to the terraform/ directory to provision the VPC, Subnets, Security Groups, and EC2 instances.
 
-Dependencies
-------------
+Initialize Terraform:
 
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
+```Bash
 
-Example Playbook
-----------------
+cd terraform
+terraform init
+```
 
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
+Format and Plan:
 
-    - hosts: servers
-      roles:
-         - { role: username.rolename, x: 42 }
+Bash
 
-License
--------
+terraform fmt
+terraform plan -out=tfplan
 
-BSD
+Apply Infrastructure:
 
-Author Information
-------------------
+Bash
 
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).
+terraform apply tfplan
+Note the Public IPs outputted at the end of this step.
 
+Bash
 
+cd ../ansible
+ansible-playbook playbook.yml -i inventory
+
+## 4. Validation & Screenshots
 
 ![alt text](image.png)
 ![alt text](image-1.png)
